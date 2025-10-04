@@ -25,6 +25,10 @@ const OrderDetailsPage = async (props: {
       order={{
         ...order,
         shippingAddress: order.shippingAddress as ShippingAddress,
+        itemsPrice: order.itemsPrice?.toString(),
+        totalPrice: order.totalPrice?.toString(),
+        shippingPrice: order.shippingPrice?.toString(),
+        taxPrice: order.taxPrice?.toString(),
       }}
     />
   );
