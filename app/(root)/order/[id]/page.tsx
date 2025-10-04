@@ -30,6 +30,7 @@ const OrderDetailsPage = async (props: {
         shippingPrice: order.shippingPrice?.toString(),
         taxPrice: order.taxPrice?.toString(),
       }}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
     />
   );
 };
