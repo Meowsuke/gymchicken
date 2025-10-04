@@ -11,10 +11,6 @@ import { CartItem, PaymentResult } from "@/types";
 import { convertToPlainObject } from "../utils";
 import { revalidatePath } from "next/cache";
 import { paypal } from "../paypal";
-import {
-  approvePayPalOrder,
-  createPayPalOrder,
-} from "@/lib/actions/order.actions";
 
 // Create Order
 export const createOrder = async () => {
