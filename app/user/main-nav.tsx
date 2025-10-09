@@ -17,8 +17,8 @@ const MainNav = ({
       href: "/user/profile",
     },
     {
-      title: "Orders",
-      href: "/user/orders",
+      title: "Workout",
+      href: "/workout",
     },
   ];
 
