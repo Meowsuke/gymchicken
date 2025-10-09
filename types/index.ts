@@ -1,32 +1,31 @@
 import { z } from "zod";
-import {
-  cartItemSchema,
-  insertCartSchema,
-  insertProductSchema,
-  shippingAddressSchema,
-  insertOrderItemSchema,
-  insertOrderSchema,
-  paymentResultSchema,
-} from "@/lib/validators";
+import { setSchema, exerciseSchema } from "@/lib/validators";
 
-export type Product = z.infer<typeof insertProductSchema> & {
-  id: string;
-  rating: string;
-  createdAt: Date;
-};
+export type SetType = z.infer<typeof setSchema>;
+export type ExerciseType = z.infer<typeof exerciseSchema>;
 
-export type Cart = z.infer<typeof insertCartSchema>;
-export type CartItem = z.infer<typeof cartItemSchema>;
-export type ShippingAddress = z.infer<typeof shippingAddressSchema>;
-export type OrderItem = z.infer<typeof insertOrderItemSchema>;
-export type Order = z.infer<typeof insertOrderSchema> & {
+export interface Set {
   id: string;
-  createdAt: Date;
-  isPaid: boolean;
-  paidAt: Date | null;
-  isDelivered: boolean;
-  deliveredAt: Date | null;
-  orderitems: OrderItem[];
-  user: { name: string; email: string };
-};
-export type PaymentResult = z.infer<typeof paymentResultSchema>;
+  weight: number | null;
+  reps: number | null;
+  exerciseId?: string;
+}
+
+export interface Exercise {
+  id: string;
+  userId: string;
+  name: string;
+  categoryColor: string;
+  muscle: string;
+  date: Date;
+  sets: Set[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ExerciseCategory {
+  id: string;
+  name: string;
+  muscle: string;
+  color: string;
+}
