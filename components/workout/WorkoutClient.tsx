@@ -18,9 +18,11 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
   const [currentMonth, setCurrentMonth] = useState<string>("");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [openExerciseId, setOpenExerciseId] = useState<string | null>(null);
+
   const [newSetInputs, setNewSetInputs] = useState<{
-    [exerciseId: string]: { weight: number; reps: number };
+    [exerciseId: string]: { weight: string; reps: string };
   }>({});
+
   const [editingSet, setEditingSet] = useState<{
     exerciseId: string;
     setId: string;
@@ -35,7 +37,6 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
 
     const updateExercises = async () => {
       if (selectedMonth === currentMonth) {
-        // 同じ月ならフィルターだけ
         setExercises(
           monthExercises.filter(
             (ex) =>
@@ -45,7 +46,6 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
         return;
       }
 
-      // 月が変わったら API 呼び出し
       const start = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
@@ -64,7 +64,6 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
       );
       setMonthExercises(data);
       setCurrentMonth(selectedMonth);
-
       setExercises(
         data.filter(
           (ex) =>
@@ -148,7 +147,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
   const handleNewSetInputChange = (
     exerciseId: string,
     field: "weight" | "reps",
-    value: number
+    value: string
   ) => {
     setNewSetInputs((prev) => ({
       ...prev,
@@ -170,7 +169,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
   };
 
   return (
-    <div className="px-4 pt-4">
+    <div className="px-2 sm:px-4 pt-4">
       <WorkoutCalendar
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
@@ -183,66 +182,62 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
 
       {exercises.length > 0 ? (
         exercises.map((exercise) => (
-          <div key={exercise.id} className="mb-4">
-            {/* --- エクササイズカード --- */}
-            <div className="flex items-center gap-2">
-              <div
-                className="flex-1 bg-white rounded-xl p-4 flex justify-between items-center shadow-sm hover:shadow-md transition-all cursor-pointer"
-                onClick={() =>
-                  setOpenExerciseId(
-                    openExerciseId === exercise.id ? null : exercise.id
-                  )
-                }
-              >
-                {/* 左側：名前・色・筋群 */}
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    {exercise.categoryColor && (
-                      <span
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: exercise.categoryColor }}
-                      />
-                    )}
-                    <h4 className="font-semibold text-lg text-gray-800">
-                      {exercise.name}
-                    </h4>
-                  </div>
-                  <p className="text-sm text-gray-500">{exercise.muscle}</p>
-                </div>
-
-                {/* 右側：Trash + Chevron */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(); // 折りたたみボタンのクリックを阻止
-                      deleteExerciseById(exercise.id);
-                    }}
-                    className="p-1.5 text-red-500 hover:text-red-600 rounded-md hover:bg-red-50 transition"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-
-                  {openExerciseId === exercise.id ? (
-                    <ChevronUp size={20} className="text-gray-500" />
-                  ) : (
-                    <ChevronDown size={20} className="text-gray-500" />
+          <div key={exercise.id} className="mb-6">
+            <div
+              className="w-full bg-white rounded-xl p-4 flex justify-between items-center shadow-sm hover:shadow-md transition-all cursor-pointer"
+              onClick={() =>
+                setOpenExerciseId(
+                  openExerciseId === exercise.id ? null : exercise.id
+                )
+              }
+            >
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  {exercise.categoryColor && (
+                    <span
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: exercise.categoryColor }}
+                    />
                   )}
+                  <h4 className="font-semibold text-base sm:text-lg text-gray-800 break-words">
+                    {exercise.name}
+                  </h4>
                 </div>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  {exercise.muscle}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteExerciseById(exercise.id);
+                  }}
+                  className="p-1.5 text-red-500 hover:text-red-600 rounded-md hover:bg-red-50 transition"
+                >
+                  <Trash2 size={18} />
+                </button>
+
+                {openExerciseId === exercise.id ? (
+                  <ChevronUp size={20} className="text-gray-500" />
+                ) : (
+                  <ChevronDown size={20} className="text-gray-500" />
+                )}
               </div>
             </div>
 
-            {/* --- セット一覧 --- */}
             {openExerciseId === exercise.id && (
-              <div className="bg-gray-50 rounded-b-xl mt-2 px-4 py-3 space-y-3 border border-gray-100 shadow-inner">
+              <div className="bg-gray-50 rounded-b-xl mt-2 px-3 sm:px-4 py-3 space-y-3 border border-gray-100 shadow-inner">
                 {exercise.sets.length > 0 ? (
                   exercise.sets.map((set, i) => (
                     <div
                       key={set.id}
-                      className="bg-white rounded-lg p-3 flex items-center justify-between shadow-sm border border-gray-100 hover:border-gray-200 transition"
+                      className="bg-white rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm border border-gray-100 hover:border-gray-200 transition"
                     >
                       {editingSet?.exerciseId === exercise.id &&
                       editingSet?.setId === set.id ? (
-                        <div className="flex items-center gap-3 flex-1">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 flex-1 w-full">
                           <input
                             type="number"
                             value={editSetInputs.weight}
@@ -252,7 +247,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                                 weight: Number(e.target.value),
                               }))
                             }
-                            className="w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center"
                             placeholder="kg"
                           />
                           <input
@@ -264,7 +259,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                                 reps: Number(e.target.value),
                               }))
                             }
-                            className="w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center"
                             placeholder="reps"
                           />
                           <button
@@ -275,7 +270,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                           </button>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-4 flex-1 text-sm">
+                        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 flex-1 text-sm">
                           <span className="font-medium text-gray-800">
                             {i + 1}セット目
                           </span>
@@ -292,20 +287,20 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
 
                       <button
                         onClick={() => deleteSetById(exercise.id, set.id)}
-                        className="text-red-500 hover:text-red-600 ml-2"
+                        className="text-red-500 hover:text-red-600 mt-2 sm:mt-0 sm:ml-2"
                       >
                         <Trash2 size={18} />
                       </button>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 text-center sm:text-left">
                     セットがまだありません。
                   </p>
                 )}
 
-                {/* --- 新しいセット追加フォーム --- */}
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                {/* ✅ シンプル＆バグなしな追加フォーム */}
+                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
                   <input
                     type="number"
                     placeholder="重量 (kg)"
@@ -314,12 +309,11 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                       handleNewSetInputChange(
                         exercise.id,
                         "weight",
-                        Number(e.target.value)
+                        e.target.value
                       )
                     }
-                    className="w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
+                    className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
                   />
-                  <span className="text-gray-700"> kg</span>
                   <input
                     type="number"
                     placeholder="回数"
@@ -328,20 +322,27 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                       handleNewSetInputChange(
                         exercise.id,
                         "reps",
-                        Number(e.target.value)
+                        e.target.value
                       )
                     }
-                    className="w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
+                    className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
                   />
-                  <span className="text-gray-700"> 回</span>
+
                   <button
-                    onClick={() =>
-                      createSetById(exercise.id, {
-                        weight: newSetInputs[exercise.id]?.weight ?? 0,
-                        reps: newSetInputs[exercise.id]?.reps ?? 0,
-                      })
-                    }
-                    className="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 transition"
+                    onClick={() => {
+                      const weight = Number(newSetInputs[exercise.id]?.weight);
+                      const reps = Number(newSetInputs[exercise.id]?.reps);
+
+                      if (!weight || !reps) return;
+
+                      createSetById(exercise.id, { weight, reps });
+
+                      setNewSetInputs((prev) => ({
+                        ...prev,
+                        [exercise.id]: { weight: "", reps: "" },
+                      }));
+                    }}
+                    className="flex items-center justify-center gap-1 w-full sm:w-auto px-3 py-1.5 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 transition"
                   >
                     <Plus size={16} />
                     追加
