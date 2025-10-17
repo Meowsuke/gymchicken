@@ -169,7 +169,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
   };
 
   return (
-    <div className="px-2 sm:px-4 pt-4">
+    <div className="px-2 sm:px-4 pt-4 text-gray-800 dark:text-gray-100 transition-colors duration-300">
       <WorkoutCalendar
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
@@ -184,7 +184,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
         exercises.map((exercise) => (
           <div key={exercise.id} className="mb-6">
             <div
-              className="w-full bg-white rounded-xl p-4 flex justify-between items-center shadow-sm hover:shadow-md transition-all cursor-pointer"
+              className="w-full bg-white dark:bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-sm hover:shadow-md transition-all cursor-pointer"
               onClick={() =>
                 setOpenExerciseId(
                   openExerciseId === exercise.id ? null : exercise.id
@@ -199,11 +199,11 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                       style={{ backgroundColor: exercise.categoryColor }}
                     />
                   )}
-                  <h4 className="font-semibold text-base sm:text-lg text-gray-800 break-words">
+                  <h4 className="font-semibold text-base sm:text-lg text-gray-800 dark:text-gray-100 break-words">
                     {exercise.name}
                   </h4>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   {exercise.muscle}
                 </p>
               </div>
@@ -214,26 +214,32 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                     e.stopPropagation();
                     deleteExerciseById(exercise.id);
                   }}
-                  className="p-1.5 text-red-500 hover:text-red-600 rounded-md hover:bg-red-50 transition"
+                  className="p-1.5 text-red-500 hover:text-red-600 rounded-md hover:bg-red-50 dark:hover:bg-gray-700 transition"
                 >
                   <Trash2 size={18} />
                 </button>
 
                 {openExerciseId === exercise.id ? (
-                  <ChevronUp size={20} className="text-gray-500" />
+                  <ChevronUp
+                    size={20}
+                    className="text-gray-500 dark:text-gray-300"
+                  />
                 ) : (
-                  <ChevronDown size={20} className="text-gray-500" />
+                  <ChevronDown
+                    size={20}
+                    className="text-gray-500 dark:text-gray-300"
+                  />
                 )}
               </div>
             </div>
 
             {openExerciseId === exercise.id && (
-              <div className="bg-gray-50 rounded-b-xl mt-2 px-3 sm:px-4 py-3 space-y-3 border border-gray-100 shadow-inner">
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-b-xl mt-2 px-3 sm:px-4 py-3 space-y-3 border border-gray-100 dark:border-gray-700 shadow-inner">
                 {exercise.sets.length > 0 ? (
                   exercise.sets.map((set, i) => (
                     <div
                       key={set.id}
-                      className="bg-white rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm border border-gray-100 hover:border-gray-200 transition"
+                      className="bg-white dark:bg-gray-800 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition"
                     >
                       {editingSet?.exerciseId === exercise.id &&
                       editingSet?.setId === set.id ? (
@@ -247,7 +253,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                                 weight: Number(e.target.value),
                               }))
                             }
-                            className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center"
+                            className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center dark:bg-gray-700 dark:border-gray-600"
                             placeholder="kg"
                           />
                           <input
@@ -259,7 +265,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                                 reps: Number(e.target.value),
                               }))
                             }
-                            className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center"
+                            className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center dark:bg-gray-700 dark:border-gray-600"
                             placeholder="reps"
                           />
                           <button
@@ -271,11 +277,15 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                         </div>
                       ) : (
                         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 flex-1 text-sm">
-                          <span className="font-medium text-gray-800">
+                          <span className="font-medium text-gray-800 dark:text-gray-100">
                             {i + 1}セット目
                           </span>
-                          <span className="text-gray-700">{set.weight} kg</span>
-                          <span className="text-gray-700">{set.reps} 回</span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            {set.weight} kg
+                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            {set.reps} 回
+                          </span>
                           <button
                             onClick={() => handleEditSetStart(exercise.id, set)}
                             className="text-blue-500 hover:text-blue-600"
@@ -294,13 +304,12 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500 text-center sm:text-left">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center sm:text-left">
                     セットがまだありません。
                   </p>
                 )}
 
-                {/* ✅ シンプル＆バグなしな追加フォーム */}
-                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
                   <input
                     type="number"
                     placeholder="重量 (kg)"
@@ -312,7 +321,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                         e.target.value
                       )
                     }
-                    className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
+                    className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <input
                     type="number"
@@ -325,18 +334,15 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
                         e.target.value
                       )
                     }
-                    className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
+                    className="w-full sm:w-24 px-3 py-1.5 border rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:border-gray-600"
                   />
 
                   <button
                     onClick={() => {
                       const weight = Number(newSetInputs[exercise.id]?.weight);
                       const reps = Number(newSetInputs[exercise.id]?.reps);
-
                       if (!weight || !reps) return;
-
                       createSetById(exercise.id, { weight, reps });
-
                       setNewSetInputs((prev) => ({
                         ...prev,
                         [exercise.id]: { weight: "", reps: "" },
@@ -353,7 +359,7 @@ const WorkoutClient: React.FC<Props> = ({ userId }) => {
           </div>
         ))
       ) : (
-        <p className="text-gray-500 mt-4 text-center">
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-center">
           この日の記録はありません。
         </p>
       )}
